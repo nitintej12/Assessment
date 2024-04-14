@@ -1,4 +1,4 @@
-package com.dol.assessment.ui
+package com.dol.assessment.utils
 
 sealed class NetworkResult<T>(
     val data: T? = null,

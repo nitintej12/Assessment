@@ -1,14 +1,16 @@
 package com.dol.assessment.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dol.assessment.data.model.PostsResponse
 import com.dol.assessment.data.repositories.ApiRepositoryImpl
-import com.dol.assessment.ui.NetworkResult
+import com.dol.assessment.utils.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,11 +30,11 @@ class MainViewModel @Inject constructor(private val repositoryImpl: ApiRepositor
 
     fun getPosts() {
         viewModelScope.launch {
-            _posts.emit(
-                HomeState().copy(
+            _posts.update {
+                it.copy(
                     isLoading = true
                 )
-            )
+            }
 
             repositoryImpl.getPosts().collect { result ->
                 when(result) {
@@ -43,11 +45,16 @@ class MainViewModel @Inject constructor(private val repositoryImpl: ApiRepositor
 
                     }
                     is NetworkResult.Success -> {
-                        _posts.emit(
-                            HomeState().copy(
+//                        _posts.emit(
+//                            HomeState().copy(
+//                                isLoading = false, postsList = result.data, isError = false
+//                            )
+//                        )
+                        _posts.update {
+                            it.copy(
                                 isLoading = false, postsList = result.data, isError = false
                             )
-                        )
+                        }
                     }
                 }
             }
