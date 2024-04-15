@@ -28,6 +28,9 @@ class MainViewModel @Inject constructor(private val repositoryImpl: ApiRepositor
     private val _posts = MutableStateFlow(HomeState())
     val posts: StateFlow<HomeState> = _posts.asStateFlow()
 
+    init {
+        getPosts()
+    }
     fun getPosts() {
         viewModelScope.launch {
             _posts.update {
@@ -45,11 +48,7 @@ class MainViewModel @Inject constructor(private val repositoryImpl: ApiRepositor
 
                     }
                     is NetworkResult.Success -> {
-//                        _posts.emit(
-//                            HomeState().copy(
-//                                isLoading = false, postsList = result.data, isError = false
-//                            )
-//                        )
+                        Log.d("ViewModel", "getPosts: ${result.data.toString()}")
                         _posts.update {
                             it.copy(
                                 isLoading = false, postsList = result.data, isError = false
