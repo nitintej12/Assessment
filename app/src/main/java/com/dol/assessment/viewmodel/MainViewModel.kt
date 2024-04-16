@@ -1,62 +1,37 @@
 package com.dol.assessment.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dol.assessment.data.model.PostsResponse
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.dol.assessment.data.model.Post
+import com.dol.assessment.data.paging.PostPagingSource
 import com.dol.assessment.data.repositories.ApiRepositoryImpl
-import com.dol.assessment.utils.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
-
-
-data class HomeState(
-    val isLoading: Boolean = false,
-    val postsList: PostsResponse? = null,
-    val isError: Boolean = false
-)
 
 @HiltViewModel
 class MainViewModel @Inject constructor(private val repositoryImpl: ApiRepositoryImpl) :
     ViewModel() {
 
-    private val _posts = MutableStateFlow(HomeState())
-    val posts: StateFlow<HomeState> = _posts.asStateFlow()
-
-    init {
-        getPosts()
+    companion object {
+        const val PAGE_SIZE = 10
     }
-    fun getPosts() {
-        viewModelScope.launch {
-            _posts.update {
-                it.copy(
-                    isLoading = true
-                )
-            }
 
-            repositoryImpl.getPosts().collect { result ->
-                when(result) {
-                    is NetworkResult.Loading -> {
 
-                    }
-                    is NetworkResult.Error -> {
 
-                    }
-                    is NetworkResult.Success -> {
-                        Log.d("ViewModel", "getPosts: ${result.data.toString()}")
-                        _posts.update {
-                            it.copy(
-                                isLoading = false, postsList = result.data, isError = false
-                            )
-                        }
-                    }
-                }
-            }
-        }
+    val posts: Flow<PagingData<Post>> = getPagedPosts()
+
+    private fun getPagedPosts(): Flow<PagingData<Post>> {
+        return Pager(
+            config = PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = false),
+            pagingSourceFactory = { PostPagingSource(repositoryImpl) }
+        ).flow.cachedIn(viewModelScope)
     }
 }
+
+
+

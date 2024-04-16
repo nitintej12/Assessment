@@ -64,11 +64,11 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     debugImplementation(libs.androidx.ui.tooling)
-    implementation (libs.material)
+    implementation(libs.material)
 
 
-    implementation (libs.androidx.lifecycle.extensions)
-    implementation (libs.androidx.activity.ktx)
+    implementation(libs.androidx.lifecycle.extensions)
+    implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     //hilt
@@ -76,15 +76,17 @@ dependencies {
     kapt(libs.hilt.android.compiler)
 
     //Coroutines
-    implementation (libs.kotlinx.coroutines.core)
-    implementation (libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
 
     //Retrofit
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
-    implementation (libs.logging.interceptor)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
 
     //recyclerview
     implementation(libs.androidx.recyclerview)
 
+    //paging
+    implementation(libs.androidx.paging.runtime.ktx)
 }
